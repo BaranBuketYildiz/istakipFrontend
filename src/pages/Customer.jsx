@@ -4,22 +4,24 @@ import CustomerForm from "./CustomerForm";
 import { Button } from "react-bootstrap";
 
 export default function Customer() {
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [show, setShow] = useState(false);
-  const handleShowForm = (customer) => {
-    setSelectedCustomer(customer);
-    setShowForm(true);
-  };
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    const [show,setShow]=useState(false);
+    const handleShowForm = (customer) => {
+        setSelectedCustomer(customer);
+        setShowForm(true);
+    };
 
-  const handleCloseShowForm = () => {
-    setShowForm(false);
-    setSelectedCustomer(null);
-  };
+    const handleCloseShowForm = () => {
+        setShowForm(false);
+        setSelectedCustomer(null);
+    };
 
-  const handleUpdate = (updatedFields) => {
-    setShow(true);
-  };
+    
+
+    const handleUpdate = (updatedFields) => {
+        setShow(true);
+    };
 
   const columns = [
     { header: "Şirket Adı", accessor: "sirketAdi" },
@@ -32,10 +34,14 @@ export default function Customer() {
     { header: "Vergi Daire NO", accessor: "vergiDaireNo" },
     { header: "Vergi Daire", accessor: "vergiDaireAd" },
     { header: "TC", accessor: "tc" },
+
+
+
     { header: "Oluşturulma Tarihi", accessor: "olusturulmaTarihi" },
   ];
 
-
+    
+  
 
   return (
     <>
