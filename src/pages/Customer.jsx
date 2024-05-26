@@ -18,7 +18,7 @@ export default function Customer() {
   };
 
   const handleUpdate = (updatedFields) => {
-    setShow(false);
+    setShow(true);
   };
 
   const columns = [
@@ -44,7 +44,6 @@ export default function Customer() {
         dataEndpoint="http://localhost:8080/customers"
         onShowForm={handleShowForm}
         deleteDataEndPoint="http://localhost:8080/customers/delete/"
-                onUpdate={handleUpdate}
       />
       <Button variant="success" onClick={() => handleShowForm(null)}>
         Yeni Müşteri Ekle
