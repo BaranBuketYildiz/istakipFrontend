@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ReusableTable from "./ReusableTable";
-import CustomerForm from "./CustomerForm";
+import CustomerForm from "./ReusableForm";
 import { Button } from "react-bootstrap";
 
 export default function Customer() {
@@ -10,8 +10,6 @@ export default function Customer() {
     const handleShowForm = (customer) => {
         setSelectedCustomer(customer);
         setShowForm(true);
-
-        
     };
 
     const handleCloseShowForm = () => {
@@ -36,9 +34,6 @@ export default function Customer() {
     { header: "Vergi Daire NO", accessor: "vergiDaireNo" },
     { header: "Vergi Daire", accessor: "vergiDaireAd" },
     { header: "TC", accessor: "tc" },
-
-
-
     { header: "Oluşturulma Tarihi", accessor: "olusturulmaTarihi" },
   ];
 
@@ -53,9 +48,7 @@ export default function Customer() {
         onShowForm={handleShowForm}
         deleteDataEndPoint="http://localhost:8080/customers/delete/"
       />
-      <Button variant="success" onClick={() => handleShowForm(null)}>
-        Yeni Müşteri Ekle
-      </Button>
+    
       {showForm && (
         <CustomerForm
           onClose={handleCloseShowForm}

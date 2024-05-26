@@ -31,7 +31,7 @@ export default function ReusableTable({
         setData(result.content);
       });
   }
-
+  
   function handleUpdate(updatedFields) {
     setUpdateFiled(updatedFields);
     setShow(true);
@@ -108,6 +108,10 @@ export default function ReusableTable({
           </Table>
         </Col>
       </Row>
+      <Button variant="success" onClick={onNewRecord}>
+        New Record
+      </Button>
     </Container>
+
   );
 }
