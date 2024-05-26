@@ -10,6 +10,8 @@ export default function Customer() {
     const handleShowForm = (customer) => {
         setSelectedCustomer(customer);
         setShowForm(true);
+
+        
     };
 
     const handleCloseShowForm = () => {
