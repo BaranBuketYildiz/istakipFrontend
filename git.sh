@@ -5,5 +5,5 @@ else
 fi
 git add .
 git commit -a -m "$COMMIT_MSG"
-git pull
+git pull --no-rebase origin master
 git push -u origin master
