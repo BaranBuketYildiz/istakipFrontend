@@ -11,7 +11,7 @@ export default function CustomerForm({ onClose,customer, onUpdate }) {
         adres: "",
         email: "",
         tc: "",
-        telefon: "",
+        telefonNO: "",
         vergiDaireAd: "",
         vergiDaireNo: "",
     });
@@ -89,7 +89,7 @@ export default function CustomerForm({ onClose,customer, onUpdate }) {
                             <Form.Control
                                 name="telefon"
                                 placeholder="Müşterinin telefon numarasını giriniz"
-                                value={selectedCustomer.telefon}
+                                value={selectedCustomer.telefonNO}
                                 onChange={handleInputChange}
                             />
                         </Form.Group>
