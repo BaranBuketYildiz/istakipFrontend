@@ -31,7 +31,7 @@ export default function ReusableTable({
         setData(result.content);
       });
   }
-  
+
   function handleUpdate(updatedFields) {
     setUpdateFiled(updatedFields);
     setShow(true);
@@ -45,23 +45,7 @@ export default function ReusableTable({
     );
     
   }
-
-  function saveOrUpdateCustomer(selectedCustomer) {
-    const url = selectedCustomer.id
-        ? `http://localhost:8080/customers/${selectedCustomer.id}`
-        : `http://localhost:8080/customers`;
-    fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        mode: "cors",
-        body: JSON.stringify(selectedCustomer),
-    }).then(res => res.json())
-        .then(result => {
-            console.log(result);
-            onUpdate(result.updatedFields);
-            loadData();  // Tabloyu güncelle
-        });
-}
+  
   return (
     <Container>
       <Row>
@@ -108,10 +92,6 @@ export default function ReusableTable({
           </Table>
         </Col>
       </Row>
-      <Button variant="success" onClick={onNewRecord}>
-        New Record
-      </Button>
     </Container>
-
   );
 }
