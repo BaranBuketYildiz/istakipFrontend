@@ -27,7 +27,7 @@ export default function Customer() {
         { header: "Şirket Adı", accessor: "sirketAdi" },
         { header: "Müşteri Adı", accessor: "ad" },
         { header: "Müşteri Soyadı", accessor: "soyad" },
-        { header: "Telefon NO", accessor: "telefon" },
+        { header: "Telefon NO", accessor: "telefonNO" },
         { header: "İL", accessor: "il" },
         { header: "İLÇE", accessor: "ilce" },
         { header: "Mahalle", accessor: "mahalle" },
@@ -43,6 +43,7 @@ export default function Customer() {
                 columns={columns}
                 dataEndpoint="http://localhost:8080/customers"
                 onShowForm={handleShowForm}
+                deleteDataEndPoint="http://localhost:8080/customers/delete/"
             />
             <Button variant="success" onClick={() => handleShowForm(null)}>Yeni Müşteri Ekle</Button>
             {showForm && (
