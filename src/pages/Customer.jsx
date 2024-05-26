@@ -34,11 +34,14 @@ export default function Customer() {
     { header: "TC", accessor: "tc" },
 
 
+    
+
+
 
     { header: "Oluşturulma Tarihi", accessor: "olusturulmaTarihi" },
   ];
 
-  
+
 
   return (
     <>
