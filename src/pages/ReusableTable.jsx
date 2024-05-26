@@ -8,6 +8,7 @@ export default function ReusableTable({
   dataEndpoint,
   onShowForm,
   deleteDataEndPoint,
+  onUpdate,
 }) {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
@@ -31,7 +32,7 @@ export default function ReusableTable({
         setData(result.content);
       });
   }
-  
+
   function handleUpdate(updatedFields) {
     setUpdateFiled(updatedFields);
     setShow(true);
@@ -59,7 +60,7 @@ export default function ReusableTable({
         .then(result => {
             console.log(result);
             onUpdate(result.updatedFields);
-            loadData();  // Tabloyu güncelle
+            loadData();  
         });
 }
   return (

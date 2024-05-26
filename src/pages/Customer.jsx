@@ -47,15 +47,11 @@ export default function Customer() {
         dataEndpoint="http://localhost:8080/customers"
         onShowForm={handleShowForm}
         deleteDataEndPoint="http://localhost:8080/customers/delete/"
+        onUpdate={handleUpdate}
+
       />
     
-      {showForm && (
-        <CustomerForm
-          onClose={handleCloseShowForm}
-          customer={selectedCustomer}
-          onUpdate={handleUpdate}
-        />
-      )}
+ 
     </>
   );
 }
