@@ -3,7 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { FormLabel } from "react-bootstrap";
 import Col from 'react-bootstrap/Col';
 
-export default function CustomerForm({ onClose,customer, onUpdate }) {
+export default function CustomerForm({ onClose,customer, onUpdate,saveOrUpdateCustomer }) {
     const[updateFiles,setUpdateFiles]=useState(null);
     const [selectedCustomer, setSelectedCustomer] = useState();
 
@@ -13,20 +13,6 @@ export default function CustomerForm({ onClose,customer, onUpdate }) {
         }
     }, [customer]);
 
-        function saveOrUpdateCustomer() {
-            const url=selectedCustomer.id ?`http://localhost:8080/customers/${selectedCustomer.id}`:`http://localhost:8080/customers`;
-            console.log(selectedCustomer);
-            fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                mode: "cors",
-                body: JSON.stringify(selectedCustomer),
-            }).then(res => res.json())
-                .then(result => {
-                    console.log(result);
-                    onUpdate(result.updatedFields);
-                });
-        }
 
     function handleInputChange(e) {  // Corrected function name
         const { name, value } = e.target;
@@ -34,7 +20,7 @@ export default function CustomerForm({ onClose,customer, onUpdate }) {
         setSelectedCustomer({ ...selectedCustomer, [name]: value });
     }
     const handleSaveAndClose =()=>{
-          saveOrUpdateCustomer();
+          saveOrUpdateCustomer(selectedCustomer);
           onClose();
     }
 

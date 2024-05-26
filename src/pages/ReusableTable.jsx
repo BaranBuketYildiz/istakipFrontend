@@ -39,8 +39,29 @@ export default function ReusableTable({
   function handleDelete(customerId) {
     fetch(`${deleteDataEndPoint}${customerId}`, {
       method: "DELETE",
-    }).then((res) => res.json);
+    }).then((res) => res.json)
+    .then(
+      loadData()
+    );
+    
   }
+
+  function saveOrUpdateCustomer(selectedCustomer) {
+    const url = selectedCustomer.id
+        ? `http://localhost:8080/customers/${selectedCustomer.id}`
+        : `http://localhost:8080/customers`;
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        mode: "cors",
+        body: JSON.stringify(selectedCustomer),
+    }).then(res => res.json())
+        .then(result => {
+            console.log(result);
+            onUpdate(result.updatedFields);
+            loadData();  // Tabloyu güncelle
+        });
+}
   return (
     <Container>
       <Row>
