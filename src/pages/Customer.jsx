@@ -32,12 +32,6 @@ export default function Customer() {
     { header: "Vergi Daire NO", accessor: "vergiDaireNo" },
     { header: "Vergi Daire", accessor: "vergiDaireAd" },
     { header: "TC", accessor: "tc" },
-
-
-    
-
-
-
     { header: "Oluşturulma Tarihi", accessor: "olusturulmaTarihi" },
   ];
 
