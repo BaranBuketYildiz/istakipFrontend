@@ -3,7 +3,7 @@ import { Row, Container, Table, Alert } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 
-export default function ReusableTable({ columns, dataEndpoint, onShowForm, onDelete }) {
+export default function ReusableTable({ columns, dataEndpoint, onShowForm, customerId}) {
     const [data, setData] = useState([]);
     const [show, setShow] = useState(false);
     const [updateFiled, setUpdateFiled] = useState(0);
@@ -31,7 +31,11 @@ export default function ReusableTable({ columns, dataEndpoint, onShowForm, onDel
         setUpdateFiled(updatedFields);
         setShow(true);
     }
-
+    const handleDelete = (customerId) => {
+        fetch(`http://localhost:8080/customers/delete/${customerId}`, {
+            method: "DELETE"
+        }).then(res => res.json);
+    };
     return (
         <Container>
             <Row>
@@ -63,7 +67,7 @@ export default function ReusableTable({ columns, dataEndpoint, onShowForm, onDel
                                         </Button>
                                         <Button
                                             variant="danger"
-                                            onClick={() => onDelete(item.id)}
+                                            onClick={() => handleDelete(item.id)}
                                         >
                                             Sil
                                         </Button>

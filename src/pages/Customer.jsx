@@ -17,11 +17,7 @@ export default function Customer() {
         setSelectedCustomer(null);
     };
 
-    const handleDelete = (customerId) => {
-        fetch(`http://localhost:8080/customers/delete/${customerId}`, {
-            method: "DELETE"
-        }).then(res => res.json);
-    };
+    
 
     const handleUpdate = (updatedFields) => {
         setShow(true);
@@ -47,7 +43,6 @@ export default function Customer() {
                 columns={columns}
                 dataEndpoint="http://localhost:8080/customers"
                 onShowForm={handleShowForm}
-                onDelete={handleDelete}
             />
             <Button variant="success" onClick={() => handleShowForm(null)}>Yeni Müşteri Ekle</Button>
             {showForm && (
