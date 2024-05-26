@@ -54,13 +54,13 @@ export default function ReusableTable({
     fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        mode: "cors",
+        mode: "cors", 
         body: JSON.stringify(selectedCustomer),
     }).then(res => res.json())
         .then(result => {
             console.log(result);
             onUpdate(result.updatedFields);
-            loadData();  // Tabloyu güncelle
+            loadData();  
         });
 }
   return (
@@ -109,6 +109,10 @@ export default function ReusableTable({
           </Table>
         </Col>
       </Row>
+      <Button variant="success" onClick={onNewRecord}>
+        New Record
+      </Button>
     </Container>
+
   );
 }
