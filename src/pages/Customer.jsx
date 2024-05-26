@@ -35,6 +35,8 @@ export default function Customer() {
     { header: "Oluşturulma Tarihi", accessor: "olusturulmaTarihi" },
   ];
 
+    
+
   return (
     <>
       <ReusableTable
@@ -42,6 +44,7 @@ export default function Customer() {
         dataEndpoint="http://localhost:8080/customers"
         onShowForm={handleShowForm}
         deleteDataEndPoint="http://localhost:8080/customers/delete/"
+                onUpdate={handleUpdate}
       />
       <Button variant="success" onClick={() => handleShowForm(null)}>
         Yeni Müşteri Ekle
