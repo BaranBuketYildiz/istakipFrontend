@@ -8,6 +8,7 @@ export default function ReusableTable({
   dataEndpoint,
   onShowForm,
   deleteDataEndPoint,
+  onUpdate,
 }) {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
@@ -45,7 +46,23 @@ export default function ReusableTable({
     );
     
   }
-  
+
+  function saveOrUpdateCustomer(selectedCustomer) {
+    const url = selectedCustomer.id
+        ? `http://localhost:8080/customers/${selectedCustomer.id}`
+        : `http://localhost:8080/customers`;
+    fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        mode: "cors",
+        body: JSON.stringify(selectedCustomer),
+    }).then(res => res.json())
+        .then(result => {
+            console.log(result);
+            onUpdate(result.updatedFields);
+            loadData();  // Tabloyu güncelle
+        });
+}
   return (
     <Container>
       <Row>
