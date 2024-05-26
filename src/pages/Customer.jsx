@@ -18,7 +18,7 @@ export default function Customer() {
   };
 
   const handleUpdate = (updatedFields) => {
-    setShow(true);
+    setShow(false);
   };
 
   const columns = [
