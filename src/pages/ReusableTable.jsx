@@ -90,7 +90,7 @@ export default function ReusableTable({
     setSelectedRecord({ ...selectedRecord, [name]: value });
   }
 
-S  return (
+  return (
     <Container>
       <Row>
         <Alert key={"info"} variant={"info"} show={show}>
