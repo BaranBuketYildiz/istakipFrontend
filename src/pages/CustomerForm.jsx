@@ -5,16 +5,7 @@ import Col from 'react-bootstrap/Col';
 
 export default function CustomerForm({ onClose,customer, onUpdate }) {
     const[updateFiles,setUpdateFiles]=useState(null);
-    const [selectedCustomer, setSelectedCustomer] = useState({
-        sirketAdi: "",
-        ad: "",
-        adres: "",
-        email: "",
-        tc: "",
-        telefonNO: "",
-        vergiDaireAd: "",
-        vergiDaireNo: "",
-    });
+    const [selectedCustomer, setSelectedCustomer] = useState();
 
     useEffect(() => {
         if (customer) {
