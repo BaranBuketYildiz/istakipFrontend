@@ -9,8 +9,8 @@ export default function Layout(){
                 <Navbar.Toggle aria-controls="basic-navbar-nav"></Navbar.Toggle>
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="customer">Customer</Nav.Link>
-                        <Nav.Link href="customer">Alış</Nav.Link>
+                        <Nav.Link href="customer">Müşteri</Nav.Link>
+                        <Nav.Link href="urun">Ürünler</Nav.Link>
                         <Nav.Link href="customer">Satış</Nav.Link>
                         <Nav.Link href="customer">E-Fatura</Nav.Link>
 

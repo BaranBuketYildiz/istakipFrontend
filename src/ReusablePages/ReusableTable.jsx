@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Row, Container, Table, Alert, Modal, Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
-
+import ReusableMessage from "./ReusableMessage";
 export default function ReusableTable({
   columns,
   dataEndpoint,
   deleteDataEndPoint,
+
 
 }) {
   const [data, setData] = useState([]);
@@ -14,7 +15,8 @@ export default function ReusableTable({
   const [updateFiled, setUpdateFiled] = useState(0);
   const [selectedRecord, setSelectedRecord] = useState({});
   const [showForm, setShowForm] = useState(false);
-
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // Silme işlemi için modalı ekliyoruz
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   useEffect(() => {
     console.log('Selected Record:', selectedRecord);
   }, [selectedRecord]);
@@ -55,15 +57,23 @@ export default function ReusableTable({
 
 
   function handleDelete(customerId) {
-    fetch(`${deleteDataEndPoint}${customerId}`, {
+    setSelectedRecord({ id: customerId });
+    setShowDeleteModal(true);
+  }
+
+  function confirmDelete() {
+    fetch(`${deleteDataEndPoint}${selectedRecord.id}`, {
       method: "DELETE",
-    }).then((res) => {
-      if (res.ok) {
-        setData(data.filter((item) => item.id !== customerId));
-      } else {
-        console.error('Delete request failed:', res.status);
-      }
-    }).catch(err => console.error('Fetch error:', err));
+    })
+      .then((res) => {
+        if (res.ok) {
+          setData(data.filter((item) => item.id !== selectedRecord.id));
+          setShowDeleteModal(false);
+        } else {
+          console.error("Delete request failed:", res.status);
+        }
+      })
+      .catch((err) => console.error("Fetch error:", err));
   }
 
   function saveOrUpdateCustomer() {
@@ -79,23 +89,50 @@ export default function ReusableTable({
     }).then(res => res.json())
       .then(result => {
         console.log(result);
-  
-        loadData();  
-        handleCloseShowForm(); 
+        handleUpdate(result.updatedFields);
+        loadData();
       });
   }
+  
+  function confirmUpdate() {
+    saveOrUpdateCustomer();
+    setShowUpdateModal(false);
+    setShowForm(false); 
+  }
+  function handleSaveButtonClick() {
+   
+    if (selectedRecord.id) {
+      setShowUpdateModal(true);
+    } else {
+      saveOrUpdateCustomer();
+      setShowForm(false);
+    }
+  }
+ 
+  
 
+  
+  
+  
+  
   function handleInputChange(e) {
     const { name, value } = e.target;
     setSelectedRecord({ ...selectedRecord, [name]: value });
   }
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
+  }
+
 
   return (
-    <Container>
-      <Row>
-        <Alert key={"info"} variant={"info"} show={show}>
-          `Güncellenen alan sayısı: ${updateFiled}`
-        </Alert>
+    <>
+      <Row className="px-5">
+        <Row className="position-absolute top-0 end-0 col-2">
+          <Alert key={"info"} variant={"info"} show={show} >
+            Güncellenen alan sayısı: {updateFiled}
+          </Alert>
+        </Row>
         <Col className="my-3">
           <Table striped bordered hover>
             <thead>
@@ -103,7 +140,7 @@ export default function ReusableTable({
                 {columns.map((col, index) => (
                   <th key={index}>{col.header}</th>
                 ))}
-                <th>Actions</th>
+                <th>Oluşturulma Tarihi</th>
               </tr>
             </thead>
             <tbody>
@@ -112,17 +149,21 @@ export default function ReusableTable({
                   {columns.map((col, index) => (
                     <td key={index}>
                       {typeof item[col.accessor] === "object" &&
-                      item[col.accessor] !== null
-                        ? `${item[col.accessor].name} ${
-                            item[col.accessor].plakaNo
-                          }`
+                        item[col.accessor] !== null
+                        ? `${item[col.accessor].name} ${item[col.accessor].plakaNo
+                        }`
                         : item[col.accessor]}
                     </td>
                   ))}
                   <td>
+                    {item.createDate ? formatDate(item.createDate) : "N/A"}
+                  </td>
+                  <td>
                     <Button variant="primary" onClick={() => handleShowForm(item)}>
                       Güncelle
                     </Button>
+                  </td>
+                  <td>
                     <Button
                       variant="danger"
                       onClick={() => handleDelete(item.id)}
@@ -136,7 +177,7 @@ export default function ReusableTable({
           </Table>
         </Col>
       </Row>
-      <Button variant="success" onClick={() => handleShowForm(null)}>
+      <Button variant="success" onClick={() => handleShowForm(null)} className="mx-5 ">
         Yeni Müşteri Ekle
       </Button>
       {showForm && (
@@ -152,7 +193,7 @@ export default function ReusableTable({
                   <Form.Control
                     type="text"
                     name={field.accessor}
-                    placeholder={field.header}
+                    placeholder={field.placeHolder}
                     value={selectedRecord ? selectedRecord[field.accessor] : ''}
                     onChange={handleInputChange}
                   />
@@ -164,13 +205,29 @@ export default function ReusableTable({
             <Button variant="secondary" onClick={handleCloseShowForm}>
               Kapat
             </Button>
-            <Button variant="primary" onClick={saveOrUpdateCustomer}>
+            <Button variant="primary" onClick={handleSaveButtonClick}>
               Kaydet
             </Button>
           </Modal.Footer>
         </Modal>
       )}
-    </Container>
+      <ReusableMessage
+        show={showDeleteModal}
+        handleClose={() => setShowDeleteModal(false)}
+        title="Kaydı Sil"
+        message="Bu kaydı silmek istediğinizden emin misiniz?"
+        confirmButtonLabel="Sil"
+        handleConfirm={confirmDelete}
+      />
+        <ReusableMessage
+        show={showUpdateModal}
+        handleClose={() => setShowUpdateModal(false)}
+        title="Kaydı Güncelle"
+        message="Bu kaydı güncellemek istediğinizden emin misiniz?"
+        confirmButtonLabel="Güncelle"
+        handleConfirm={confirmUpdate}
+      />
+    </>
 
   );
 }
