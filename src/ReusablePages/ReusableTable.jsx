@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Row, Container, Table, Alert, Modal, Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import ReusableMessage from "./ReusableMessage";
+import ContextMenu from "./ContexMenu";
 export default function ReusableTable({
   columns,
   dataEndpoint,
@@ -17,6 +18,30 @@ export default function ReusableTable({
   const [showForm, setShowForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Silme işlemi için modalı ekliyoruz
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
+  const contextMenuRef = useRef(null);
+
+  const handleContextMenu = (event, item) => {
+    event.preventDefault();
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      item,
+    });
+  };
+  useEffect(() => {
+    loadData();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const handleClickOutside = (event) => {
+    if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+      setContextMenu(null);
+    }
+  };
+
   useEffect(() => {
     console.log('Selected Record:', selectedRecord);
   }, [selectedRecord]);
@@ -59,6 +84,7 @@ export default function ReusableTable({
   function handleDelete(customerId) {
     setSelectedRecord({ id: customerId });
     setShowDeleteModal(true);
+    setContextMenu(null);
   }
 
   function confirmDelete() {
@@ -93,28 +119,24 @@ export default function ReusableTable({
         loadData();
       });
   }
-  
+
   function confirmUpdate() {
     saveOrUpdateCustomer();
     setShowUpdateModal(false);
-    setShowForm(false); 
+    setShowForm(false);
+
   }
   function handleSaveButtonClick() {
-   
+
     if (selectedRecord.id) {
       setShowUpdateModal(true);
+      setContextMenu();
     } else {
       saveOrUpdateCustomer();
       setShowForm(false);
     }
   }
- 
-  
 
-  
-  
-  
-  
   function handleInputChange(e) {
     const { name, value } = e.target;
     setSelectedRecord({ ...selectedRecord, [name]: value });
@@ -147,7 +169,7 @@ export default function ReusableTable({
               {data.map((item) => (
                 <tr key={item.id}>
                   {columns.map((col, index) => (
-                    <td key={index}>
+                    <td key={index} onContextMenu={(e) => handleContextMenu(e, item)}>
                       {typeof item[col.accessor] === "object" &&
                         item[col.accessor] !== null
                         ? `${item[col.accessor].name} ${item[col.accessor].plakaNo
@@ -219,7 +241,7 @@ export default function ReusableTable({
         confirmButtonLabel="Sil"
         handleConfirm={confirmDelete}
       />
-        <ReusableMessage
+      <ReusableMessage
         show={showUpdateModal}
         handleClose={() => setShowUpdateModal(false)}
         title="Kaydı Güncelle"
@@ -227,6 +249,17 @@ export default function ReusableTable({
         confirmButtonLabel="Güncelle"
         handleConfirm={confirmUpdate}
       />
+      {contextMenu && (
+        <div ref={contextMenuRef}>
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            onDelete={() => handleDelete(contextMenu.item.id)}
+            onEdit={() => handleShowForm(contextMenu.item)}
+          />
+        </div>
+      )}
+
     </>
 
   );
