@@ -7,7 +7,7 @@ import ContextMenu from "./ContexMenu";
 export default function ReusableTable({
   columns,
   dataEndpoint,
-  deleteDataEndPoint,
+  tableName,
 
 
 }) {
@@ -20,6 +20,8 @@ export default function ReusableTable({
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const contextMenuRef = useRef(null);
+  const [list, setList] = useState({});
+
 
   const handleContextMenu = (event, item) => {
     event.preventDefault();
@@ -63,6 +65,7 @@ export default function ReusableTable({
 
   useEffect(() => {
     loadData();
+    getDataAsList();
   }, []);
 
   useEffect(() => {
@@ -73,7 +76,7 @@ export default function ReusableTable({
   }, [show]);
 
   function loadData() {
-    fetch(dataEndpoint)
+    fetch(dataEndpoint+tableName)
       .then((res) => res.json())
       .then((result) => {
         setData(result.content);
@@ -88,7 +91,7 @@ export default function ReusableTable({
   }
 
   function confirmDelete() {
-    fetch(`${deleteDataEndPoint}${selectedRecord.id}`, {
+    fetch(`${dataEndpoint+tableName+ '/delete/'}${selectedRecord.id}`, {
       method: "DELETE",
     })
       .then((res) => {
@@ -105,8 +108,8 @@ export default function ReusableTable({
   function saveOrUpdateCustomer() {
     console.log(selectedRecord);
     const url = selectedRecord.id
-      ? `${dataEndpoint}/${selectedRecord.id}`
-      : `${dataEndpoint}`;
+      ? `${dataEndpoint + tableName}/${selectedRecord.id}`
+      : `${dataEndpoint + tableName}`;
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -145,6 +148,16 @@ export default function ReusableTable({
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
   }
+  async function getDataAsList(columnType) {
+    try {
+      const response = await fetch(`${dataEndpoint}${columnType}`);
+      const result = await response.json();
+      return result.content;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return [];
+    }
+  }
 
 
   return (
@@ -155,6 +168,7 @@ export default function ReusableTable({
             Güncellenen alan sayısı: {updateFiled}
           </Alert>
         </Row>
+
         <Col className="my-3">
           <Table striped bordered hover>
             <thead>
@@ -209,18 +223,38 @@ export default function ReusableTable({
           </Modal.Header>
           <Modal.Body>
             <Form>
-              {columns.map((field) => (
-                <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
-                  <Form.Label>{field.header}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name={field.accessor}
-                    placeholder={field.placeHolder}
-                    value={selectedRecord ? selectedRecord[field.accessor] : ''}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              ))}
+            {columns.map(async (field) => {
+  if (field.select && field.select === 'ListSelect') {
+    const fetchedData = await getDataAsList(field.type);
+
+    return (
+      <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+        <Form.Label>{field.header}</Form.Label>
+        <Form.Select aria-label="Default select example">
+          {fetchedData.map((item) => (
+            <option key={item.id} value={item.id}>{item.name}</option>
+          ))}
+        </Form.Select>
+      </Form.Group>
+    );
+                } else {
+                  return (
+                    <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+                      <Form.Label>{field.header}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name={field.accessor}
+                        placeholder={field.placeHolder}
+                        value={selectedRecord ? selectedRecord[field.accessor] : ''}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  )
+                }
+              }
+
+
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer>
