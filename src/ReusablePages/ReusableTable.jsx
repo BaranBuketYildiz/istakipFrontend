@@ -7,7 +7,7 @@ import ContextMenu from "./ContexMenu";
 export default function ReusableTable({
   columns,
   dataEndpoint,
-  tableName,
+  tableName
 
 
 }) {
@@ -20,8 +20,7 @@ export default function ReusableTable({
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const contextMenuRef = useRef(null);
-  const [list, setList] = useState({});
-
+  const [fetchData, setFetchData]=useState([]);
 
   const handleContextMenu = (event, item) => {
     event.preventDefault();
@@ -48,6 +47,11 @@ export default function ReusableTable({
     console.log('Selected Record:', selectedRecord);
   }, [selectedRecord]);
 
+
+  useEffect(() => {
+    console.log('on gling Record:', fetchData);
+  }, [fetchData]);
+
   const handleShowForm = (item) => {
     setSelectedRecord(item || {});
     setShowForm(true);
@@ -65,7 +69,6 @@ export default function ReusableTable({
 
   useEffect(() => {
     loadData();
-    getDataAsList();
   }, []);
 
   useEffect(() => {
@@ -148,18 +151,16 @@ export default function ReusableTable({
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
   }
-  async function getDataAsList(columnType) {
-    try {
-      const response = await fetch(`${dataEndpoint}${columnType}`);
-      const result = await response.json();
-      return result.content;
-    } catch (error) {
-      console.error("Error fetching data:", error);
-      return [];
-    }
-  }
+   
+const  handleSelectClick= async (type)=>{
+  const response = await fetch(`${dataEndpoint +type}`);
+  const data = response.json();
+  console.log(data)
 
+  setFetchData(data.content);
+  
 
+}
   return (
     <>
       <Row className="px-5">
@@ -223,20 +224,19 @@ export default function ReusableTable({
           </Modal.Header>
           <Modal.Body>
             <Form>
-            {columns.map(async (field) => {
-  if (field.select && field.select === 'ListSelect') {
-    const fetchedData = await getDataAsList(field.type);
-
-    return (
-      <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
-        <Form.Label>{field.header}</Form.Label>
-        <Form.Select aria-label="Default select example">
-          {fetchedData.map((item) => (
-            <option key={item.id} value={item.id}>{item.name}</option>
-          ))}
-        </Form.Select>
-      </Form.Group>
-    );
+              {columns.map((field) => {
+                if (field.select && field.select == 'ListSelect') {
+                  return (
+                    <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+                      <Form.Label>{field.header}</Form.Label>
+                      <Form.Select aria-label="Default select example" onClick={()=>handleSelectClick(field.type)}>
+                        {fetchData.map((item) => {
+                          <option key={item.id} value={item.id}>{item.name}</option>
+                        })}
+                        
+                      </Form.Select>
+                    </Form.Group>
+                  )
                 } else {
                   return (
                     <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
