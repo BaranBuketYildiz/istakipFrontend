@@ -7,8 +7,6 @@ export default function ReusableTable({
   columns,
   dataEndpoint,
   deleteDataEndPoint,
-
-
 }) {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);

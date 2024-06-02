@@ -12,7 +12,6 @@ function App() {
           <Route path='/' element={<Layout />}>
           <Route path='customer' element={<Customer />}/>
           </Route>
-
         </Routes>
       </BrowserRouter>
     </>
