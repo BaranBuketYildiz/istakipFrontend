@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Row, Container, Table, Alert, Modal, Form } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import ReusableMessage from "./ReusableMessage";
+import ContextMenu from "./ContexMenu";
 export default function ReusableTable({
   columns,
   dataEndpoint,
-  deleteDataEndPoint,
+  tableName
+
+
 }) {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
@@ -15,9 +18,39 @@ export default function ReusableTable({
   const [showForm, setShowForm] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false); // Silme işlemi için modalı ekliyoruz
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
+  const contextMenuRef = useRef(null);
+  const [fetchData, setFetchData]=useState([]);
+
+  const handleContextMenu = (event, item) => {
+    event.preventDefault();
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+      item,
+    });
+  };
+  useEffect(() => {
+    loadData();
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  const handleClickOutside = (event) => {
+    if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+      setContextMenu(null);
+    }
+  };
+
   useEffect(() => {
     console.log('Selected Record:', selectedRecord);
   }, [selectedRecord]);
+
+
+  useEffect(() => {
+    console.log('on gling Record:', fetchData);
+  }, [fetchData]);
 
   const handleShowForm = (item) => {
     setSelectedRecord(item || {});
@@ -46,7 +79,7 @@ export default function ReusableTable({
   }, [show]);
 
   function loadData() {
-    fetch(dataEndpoint)
+    fetch(dataEndpoint+tableName)
       .then((res) => res.json())
       .then((result) => {
         setData(result.content);
@@ -57,10 +90,11 @@ export default function ReusableTable({
   function handleDelete(customerId) {
     setSelectedRecord({ id: customerId });
     setShowDeleteModal(true);
+    setContextMenu(null);
   }
 
   function confirmDelete() {
-    fetch(`${deleteDataEndPoint}${selectedRecord.id}`, {
+    fetch(`${dataEndpoint+tableName+ '/delete/'}${selectedRecord.id}`, {
       method: "DELETE",
     })
       .then((res) => {
@@ -77,8 +111,8 @@ export default function ReusableTable({
   function saveOrUpdateCustomer() {
     console.log(selectedRecord);
     const url = selectedRecord.id
-      ? `${dataEndpoint}/${selectedRecord.id}`
-      : `${dataEndpoint}`;
+      ? `${dataEndpoint + tableName}/${selectedRecord.id}`
+      : `${dataEndpoint + tableName}`;
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -91,28 +125,24 @@ export default function ReusableTable({
         loadData();
       });
   }
-  
+
   function confirmUpdate() {
     saveOrUpdateCustomer();
     setShowUpdateModal(false);
-    setShowForm(false); 
+    setShowForm(false);
+
   }
   function handleSaveButtonClick() {
-   
+
     if (selectedRecord.id) {
       setShowUpdateModal(true);
+      setContextMenu();
     } else {
       saveOrUpdateCustomer();
       setShowForm(false);
     }
   }
- 
-  
 
-  
-  
-  
-  
   function handleInputChange(e) {
     const { name, value } = e.target;
     setSelectedRecord({ ...selectedRecord, [name]: value });
@@ -121,8 +151,16 @@ export default function ReusableTable({
     const date = new Date(dateString);
     return date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
   }
+   
+const  handleSelectClick= async (type)=>{
+  const response = await fetch(`${dataEndpoint +type}`);
+  const data = response.json();
+  console.log(data)
 
+  setFetchData(data.content);
+  
 
+}
   return (
     <>
       <Row className="px-5">
@@ -131,6 +169,7 @@ export default function ReusableTable({
             Güncellenen alan sayısı: {updateFiled}
           </Alert>
         </Row>
+
         <Col className="my-3">
           <Table striped bordered hover>
             <thead>
@@ -145,7 +184,7 @@ export default function ReusableTable({
               {data.map((item) => (
                 <tr key={item.id}>
                   {columns.map((col, index) => (
-                    <td key={index}>
+                    <td key={index} onContextMenu={(e) => handleContextMenu(e, item)}>
                       {typeof item[col.accessor] === "object" &&
                         item[col.accessor] !== null
                         ? `${item[col.accessor].name} ${item[col.accessor].plakaNo
@@ -185,18 +224,37 @@ export default function ReusableTable({
           </Modal.Header>
           <Modal.Body>
             <Form>
-              {columns.map((field) => (
-                <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
-                  <Form.Label>{field.header}</Form.Label>
-                  <Form.Control
-                    type="text"
-                    name={field.accessor}
-                    placeholder={field.placeHolder}
-                    value={selectedRecord ? selectedRecord[field.accessor] : ''}
-                    onChange={handleInputChange}
-                  />
-                </Form.Group>
-              ))}
+              {columns.map((field) => {
+                if (field.select && field.select == 'ListSelect') {
+                  return (
+                    <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+                      <Form.Label>{field.header}</Form.Label>
+                      <Form.Select aria-label="Default select example" onClick={()=>handleSelectClick(field.type)}>
+                        {fetchData.map((item) => {
+                          <option key={item.id} value={item.id}>{item.name}</option>
+                        })}
+                        
+                      </Form.Select>
+                    </Form.Group>
+                  )
+                } else {
+                  return (
+                    <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+                      <Form.Label>{field.header}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name={field.accessor}
+                        placeholder={field.placeHolder}
+                        value={selectedRecord ? selectedRecord[field.accessor] : ''}
+                        onChange={handleInputChange}
+                      />
+                    </Form.Group>
+                  )
+                }
+              }
+
+
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -217,7 +275,7 @@ export default function ReusableTable({
         confirmButtonLabel="Sil"
         handleConfirm={confirmDelete}
       />
-        <ReusableMessage
+      <ReusableMessage
         show={showUpdateModal}
         handleClose={() => setShowUpdateModal(false)}
         title="Kaydı Güncelle"
@@ -225,6 +283,17 @@ export default function ReusableTable({
         confirmButtonLabel="Güncelle"
         handleConfirm={confirmUpdate}
       />
+      {contextMenu && (
+        <div ref={contextMenuRef}>
+          <ContextMenu
+            x={contextMenu.x}
+            y={contextMenu.y}
+            onDelete={() => handleDelete(contextMenu.item.id)}
+            onEdit={() => handleShowForm(contextMenu.item)}
+          />
+        </div>
+      )}
+
     </>
 
   );
