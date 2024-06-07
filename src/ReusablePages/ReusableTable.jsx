@@ -154,10 +154,10 @@ export default function ReusableTable({
    
 const  handleSelectClick= async (type)=>{
   const response = await fetch(`${dataEndpoint +type}`);
-  const data = response.json();
+  const data = await response.json();
   console.log(data)
-
-  setFetchData(data.content);
+  setFetchData([]);
+  setFetchData(data.content || []) ;
   
 
 }
@@ -229,9 +229,9 @@ const  handleSelectClick= async (type)=>{
                   return (
                     <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
                       <Form.Label>{field.header}</Form.Label>
-                      <Form.Select aria-label="Default select example" onClick={()=>handleSelectClick(field.type)}>
+                      <Form.Select aria-label="Default select example" onClick={()=>handleSelectClick(field.type)} >
                         {fetchData.map((item) => {
-                          <option key={item.id} value={item.id}>{item.name}</option>
+                          return <option key={item.id} value={item.id}>{item.name}</option>
                         })}
                         
                       </Form.Select>
