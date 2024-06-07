@@ -177,7 +177,7 @@ const  handleSelectClick= async (type)=>{
                 {columns.map((col, index) => (
                   <th key={index}>{col.header}</th>
                 ))}
-                <th>Oluşturulma Tarihi</th>
+                <th>Kayıt Tarihi</th>
               </tr>
             </thead>
             <tbody>
@@ -226,6 +226,7 @@ const  handleSelectClick= async (type)=>{
             <Form>
               {columns.map((field) => {
                 if (field.select && field.select == 'ListSelect') {
+                  console.log('Field:', field);
                   return (
                     <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
                       <Form.Label>{field.header}</Form.Label>
