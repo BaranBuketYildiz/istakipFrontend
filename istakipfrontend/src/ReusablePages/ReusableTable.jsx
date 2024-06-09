@@ -82,7 +82,10 @@ export default function ReusableTable({
     fetch(dataEndpoint+tableName)
       .then((res) => res.json())
       .then((result) => {
-        setData(result.content);
+        if (result.content) {
+          setData(result.content);
+        } else
+        setData(result);
       });
   }
 
