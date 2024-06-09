@@ -160,7 +160,10 @@ const  handleSelectClick= async (type)=>{
   const data = await response.json();
   console.log(data)
   setFetchData([]);
-  setFetchData(data.content || []) ;
+  if(data.content)
+    setFetchData(data.content || []) ;
+  else
+    setFetchData(data || []) ;
   
 
 }
