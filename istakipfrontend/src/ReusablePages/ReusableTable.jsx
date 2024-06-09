@@ -187,9 +187,7 @@ export default function ReusableTable({ columns, dataEndpoint, tableName }) {
                     >
                       {typeof item[col.accessor] === "object" &&
                       item[col.accessor] !== null
-                        ? `${item[col.accessor].name} ${
-                            item[col.accessor].plakaNo
-                          }`
+                        ? item[col.accessor].name
                         : item[col.accessor]}
                     </td>
                   ))}
@@ -249,7 +247,7 @@ export default function ReusableTable({ columns, dataEndpoint, tableName }) {
                           console.log("e.target.value", e.target.value);
                           setSelectedRecord({
                             ...selectedRecord,
-                            [field.accessor]: {"id": e.target.value},
+                            [field.accessor]: { id: e.target.value },
                           });
                         }}
                       >
