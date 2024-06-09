@@ -4,13 +4,7 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import ReusableMessage from "./ReusableMessage";
 import ContextMenu from "./ContexMenu";
-export default function ReusableTable({
-  columns,
-  dataEndpoint,
-  tableName
-
-
-}) {
+export default function ReusableTable({ columns, dataEndpoint, tableName }) {
   const [data, setData] = useState([]);
   const [show, setShow] = useState(false);
   const [updateFiled, setUpdateFiled] = useState(0);
@@ -20,7 +14,7 @@ export default function ReusableTable({
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
   const contextMenuRef = useRef(null);
-  const [fetchData, setFetchData]=useState([]);
+  const [fetchData, setFetchData] = useState([]);
 
   const handleContextMenu = (event, item) => {
     event.preventDefault();
@@ -38,18 +32,20 @@ export default function ReusableTable({
     };
   }, []);
   const handleClickOutside = (event) => {
-    if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+    if (
+      contextMenuRef.current &&
+      !contextMenuRef.current.contains(event.target)
+    ) {
       setContextMenu(null);
     }
   };
 
   useEffect(() => {
-    console.log('Selected Record:', selectedRecord);
+    console.log("Selected Record:", selectedRecord);
   }, [selectedRecord]);
 
-
   useEffect(() => {
-    console.log('on gling Record:', fetchData);
+    console.log("on gling Record:", fetchData);
   }, [fetchData]);
 
   const handleShowForm = (item) => {
@@ -79,16 +75,14 @@ export default function ReusableTable({
   }, [show]);
 
   function loadData() {
-    fetch(dataEndpoint+tableName)
+    fetch(dataEndpoint + tableName)
       .then((res) => res.json())
       .then((result) => {
         if (result.content) {
           setData(result.content);
-        } else
-        setData(result);
+        } else setData(result);
       });
   }
-
 
   function handleDelete(customerId) {
     setSelectedRecord({ id: customerId });
@@ -97,7 +91,7 @@ export default function ReusableTable({
   }
 
   function confirmDelete() {
-    fetch(`${dataEndpoint+tableName+ '/delete/'}${selectedRecord.id}`, {
+    fetch(`${dataEndpoint + tableName + "/delete/"}${selectedRecord.id}`, {
       method: "DELETE",
     })
       .then((res) => {
@@ -121,8 +115,9 @@ export default function ReusableTable({
       headers: { "Content-Type": "application/json" },
       mode: "cors",
       body: JSON.stringify(selectedRecord),
-    }).then(res => res.json())
-      .then(result => {
+    })
+      .then((res) => res.json())
+      .then((result) => {
         console.log(result);
         handleUpdate(result.updatedFields);
         loadData();
@@ -133,10 +128,8 @@ export default function ReusableTable({
     saveOrUpdateCustomer();
     setShowUpdateModal(false);
     setShowForm(false);
-
   }
   function handleSaveButtonClick() {
-
     if (selectedRecord.id) {
       setShowUpdateModal(true);
       setContextMenu();
@@ -152,26 +145,24 @@ export default function ReusableTable({
   }
   function formatDate(dateString) {
     const date = new Date(dateString);
-    return date.toISOString().split('T')[0]; // Format the date as "YYYY-MM-DD"
+    return date.toISOString().split("T")[0]; // Format the date as "YYYY-MM-DD"
   }
-   
-const  handleSelectClick= async (type)=>{
-  const response = await fetch(`${dataEndpoint +type}`);
-  const data = await response.json();
-  console.log(data)
-  setFetchData([]);
-  if(data.content)
-    setFetchData(data.content || []) ;
-  else
-    setFetchData(data || []) ;
-  
 
-}
+  const handleSelectClick = async (type) => {
+    const response = await fetch(`${dataEndpoint + type}`);
+    const data = await response.json();
+    console.log(data);
+    if (data)
+      setFetchData((prevState) => ({
+        ...prevState,
+        [type]: data.content || data || [],
+      }));
+  };
   return (
     <>
       <Row className="px-5">
         <Row className="position-absolute top-0 end-0 col-2">
-          <Alert key={"info"} variant={"info"} show={show} >
+          <Alert key={"info"} variant={"info"} show={show}>
             Güncellenen alan sayısı: {updateFiled}
           </Alert>
         </Row>
@@ -190,11 +181,15 @@ const  handleSelectClick= async (type)=>{
               {data.map((item) => (
                 <tr key={item.id}>
                   {columns.map((col, index) => (
-                    <td key={index} onContextMenu={(e) => handleContextMenu(e, item)}>
+                    <td
+                      key={index}
+                      onContextMenu={(e) => handleContextMenu(e, item)}
+                    >
                       {typeof item[col.accessor] === "object" &&
-                        item[col.accessor] !== null
-                        ? `${item[col.accessor].name} ${item[col.accessor].plakaNo
-                        }`
+                      item[col.accessor] !== null
+                        ? `${item[col.accessor].name} ${
+                            item[col.accessor].plakaNo
+                          }`
                         : item[col.accessor]}
                     </td>
                   ))}
@@ -202,7 +197,10 @@ const  handleSelectClick= async (type)=>{
                     {item.createDate ? formatDate(item.createDate) : "N/A"}
                   </td>
                   <td>
-                    <Button variant="primary" onClick={() => handleShowForm(item)}>
+                    <Button
+                      variant="primary"
+                      onClick={() => handleShowForm(item)}
+                    >
                       Güncelle
                     </Button>
                   </td>
@@ -220,48 +218,72 @@ const  handleSelectClick= async (type)=>{
           </Table>
         </Col>
       </Row>
-      <Button variant="success" onClick={() => handleShowForm(null)} className="mx-5 ">
+      <Button
+        variant="success"
+        onClick={() => handleShowForm(null)}
+        className="mx-5 "
+      >
         Yeni Müşteri Ekle
       </Button>
       {showForm && (
-        <Modal show onHide={handleCloseShowForm} className='modal-lg'>
+        <Modal show onHide={handleCloseShowForm} className="modal-lg">
           <Modal.Header closeButton>
             <Modal.Title>Müşteri</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form>
               {columns.map((field) => {
-                if (field.select && field.select == 'ListSelect') {
-                  console.log('Field:', field);
+                if (field.select && field.select == "ListSelect") {
+                  console.log("Field:", field);
                   return (
-                    <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+                    <Form.Group
+                      as={Col}
+                      controlId={field.accessor}
+                      key={field.accessor}
+                    >
                       <Form.Label>{field.header}</Form.Label>
-                      <Form.Select aria-label="Default select example" onClick={()=>handleSelectClick(field.type)} >
-                        {fetchData.map((item) => {
-                          return <option key={item.id} value={item.id}>{item.name}</option>
+                      <Form.Select
+                        aria-label="Default select example"
+                        onClick={() => handleSelectClick(field.type)}
+                        onChange={(e) => {
+                          console.log("e.target.value", e.target.value);
+                          setSelectedRecord({
+                            ...selectedRecord,
+                            [field.accessor]: {"id": e.target.value},
+                          });
+                        }}
+                      >
+                        {fetchData[field.type]?.map((item) => {
+                          return (
+                            <option key={item.id} value={item.id}>
+                              {item.name}
+                            </option>
+                          );
                         })}
-                        
                       </Form.Select>
                     </Form.Group>
-                  )
+                  );
                 } else {
                   return (
-                    <Form.Group as={Col} controlId={field.accessor} key={field.accessor}>
+                    <Form.Group
+                      as={Col}
+                      controlId={field.accessor}
+                      key={field.accessor}
+                    >
                       <Form.Label>{field.header}</Form.Label>
                       <Form.Control
                         type="text"
                         name={field.accessor}
                         placeholder={field.placeHolder}
-                        value={selectedRecord ? selectedRecord[field.accessor] : ''}
+                        value={
+                          selectedRecord ? selectedRecord[field.accessor] : ""
+                        }
                         onChange={handleInputChange}
                       />
                     </Form.Group>
-                  )
+                  );
                 }
-              }
-
-
-              )}
+              })}
             </Form>
           </Modal.Body>
           <Modal.Footer>
@@ -300,8 +322,6 @@ const  handleSelectClick= async (type)=>{
           />
         </div>
       )}
-
     </>
-
   );
 }
