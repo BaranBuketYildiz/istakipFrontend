@@ -3,9 +3,9 @@ import ReusableTable from "../ReusablePages/ReusableTable";
 export default function(){
     const columns=
     [
-        { header: "Cari Tip", accessor: "cari_tip_id", placeHolder: "Cari kodunu giriniz" },
-        { header: "Şirket Adı", accessor: "customer_id", placeHolder: "Müşteri adını giriniz" },
-        { header: "Ürün", accessor: "urun_id", placeHolder: "ürün giriniz" },
+        { header: "Cari Tip", accessor: "cariTip", placeHolder: "Cari kodunu giriniz", select:"ListSelect",type:"cariTip"},
+        { header: "Şirket Adı", accessor: "customer", placeHolder: "Müşteri adını giriniz"  ,select:"ListSelect",type:"customer"},
+        { header: "Ürün", accessor: "urun", placeHolder: "ürün giriniz",select:"ListSelect",type:"urun" },
         { header: "Adet", accessor: "adet", placeHolder: "Adet giriniz" },
         { header: "Birim Fiyat", accessor: "birimFiyat", placeHolder: "Birim Fiyat giriniz" },
         { header: "toplamTutar", accessor: "toplamTutar",  defaultValue: "0"  },
