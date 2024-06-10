@@ -11,7 +11,7 @@ export default function Customer() {
     {
       header: "Ürün Tipi",
       accessor: "tip",
-      type: "urunTip",
+      type: "tip_id",
       select: "ListSelect",
       placeHolder: "Ürün Tipi Seçin",
     },

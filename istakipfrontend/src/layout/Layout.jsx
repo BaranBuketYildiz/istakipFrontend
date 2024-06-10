@@ -12,7 +12,7 @@ export default function Layout() {
                         <Nav.Link href="customer">Müşteri</Nav.Link>
                         
                         <Nav.Link href="urun">Stok</Nav.Link>
-                        <Nav.Link href="customer">Satış</Nav.Link>
+                        <Nav.Link href="cari">Cari</Nav.Link>
                         <Nav.Link href="customer">E-Fatura</Nav.Link>
 
                     </Nav>
