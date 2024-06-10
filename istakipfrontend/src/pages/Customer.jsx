@@ -4,7 +4,7 @@ export default function Customer() {
 
 
   const columns = [
-    { header: "Şirket Adı", accessor: "sirketAdi" , placeHolder:"Şirket Adını Giriniz"},
+    { header: "Şirket Adı", accessor: "name" , placeHolder:"Şirket Adını Giriniz"},
     { header: "Müşteri Adı", accessor: "ad", placeHolder:"Müşteri Adını Giriniz" },
     { header: "Müşteri Soyadı", accessor: "soyad", placeHolder:"Müşteri Soyadını Giriniz" },
     { header: "Telefon NO", accessor: "telefonNo", placeHolder:"Telefon numarasını Giriniz" },

@@ -106,6 +106,7 @@ export default function ReusableTable({ columns, dataEndpoint, tableName }) {
   }
 
   function saveOrUpdateCustomer() {
+    console.log("selectedRecord");
     console.log(selectedRecord);
     const url = selectedRecord.id
       ? `${dataEndpoint + tableName}/${selectedRecord.id}`
@@ -158,6 +159,7 @@ export default function ReusableTable({ columns, dataEndpoint, tableName }) {
         [type]: data.content || data || [],
       }));
   };
+ 
   return (
     <>
       <Row className="px-5">
@@ -232,7 +234,6 @@ export default function ReusableTable({ columns, dataEndpoint, tableName }) {
             <Form>
               {columns.map((field) => {
                 if (field.select && field.select == "ListSelect") {
-                  console.log("Field:", field);
                   return (
                     <Form.Group
                       as={Col}
@@ -244,11 +245,16 @@ export default function ReusableTable({ columns, dataEndpoint, tableName }) {
                         aria-label="Default select example"
                         onClick={() => handleSelectClick(field.type)}
                         onChange={(e) => {
-                          console.log("e.target.value", e.target.value);
-                          setSelectedRecord({
-                            ...selectedRecord,
-                            [field.accessor]: { id: e.target.value },
-                          });
+                          const { name, value } = e.target;
+                          console.log("name", name);
+                          console.log("value", value);
+                      
+                          if (Array.isArray(value)) {
+                            setSelectedRecord({ ...selectedRecord, [name]: {value} });
+                          } else {
+                            setSelectedRecord({ ...selectedRecord, [field.accessor]: {id:value} });
+                          }
+
                         }}
                       >
                         {fetchData[field.type]?.map((item) => {
