@@ -5,7 +5,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Layout from './layout/Layout';
 import Customer from './pages/Customer';
 import Urun from './pages/Urun';
-import Cari from './pages/Cari';
+import Fatura from './pages/Fatura';
 function App() {
   return (
     <>
@@ -14,7 +14,7 @@ function App() {
           <Route path='/' element={<Layout />}>
           <Route path='customer' element={<Customer />}/>
           <Route path='urun' element={<Urun />}/>
-          <Route path='cari' element={<Cari/>}/>
+          <Route path='cari' element={<Fatura/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
